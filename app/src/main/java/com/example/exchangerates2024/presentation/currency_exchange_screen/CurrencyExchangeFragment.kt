@@ -51,11 +51,11 @@ class CurrencyExchangeFragment : Fragment() {
                     currencyExchangeInputAdapter?.notifyDataSetChanged()
                     currencyExchangeOutputAdapter?.notifyDataSetChanged()
                 }, 300)
-            }) { inputNumber ->
-                currencyExchangeOutputAdapter?.inputNumber = inputNumber
+            }) { inputNumber, outputNumber ->
+                currencyExchangeOutputAdapter?.outputNumber = inputNumber
+                currencyExchangeOutputAdapter?.inputNumber = outputNumber
                 currencyExchangeOutputAdapter?.notifyDataSetChanged()
             }
-        currencyExchangeInputAdapter?.inputFlag = true
         binding.rvExchangeRateInput.adapter = currencyExchangeInputAdapter
         PagerSnapHelper().attachToRecyclerView(binding.rvExchangeRateInput)
 
@@ -67,16 +67,18 @@ class CurrencyExchangeFragment : Fragment() {
                     currencyExchangeInputAdapter?.notifyDataSetChanged()
                     currencyExchangeOutputAdapter?.notifyDataSetChanged()
                 }, 300)
-            }) { inputNumber ->
-//            currencyExchangeInputAdapter?.inputNumber = inputNumber
+            }) { inputNumber, outputNumber ->
+                currencyExchangeInputAdapter?.outputNumber = inputNumber
+                currencyExchangeInputAdapter?.inputNumber = outputNumber
+                currencyExchangeInputAdapter?.notifyDataSetChanged()
             }
-        currencyExchangeOutputAdapter?.inputFlag = false
         binding.rvExchangeRateOutput.adapter = currencyExchangeOutputAdapter
         PagerSnapHelper().attachToRecyclerView(binding.rvExchangeRateOutput)
     }
 
     private fun initObservers() {
-        viewModel.currencyRatesSLE.observe(viewLifecycleOwner) {
+        viewModel.currencyRatesMLE.observe(viewLifecycleOwner) {
+
             currencyExchangeInputAdapter?.rates = it
             currencyExchangeOutputAdapter?.rates = it
         }
@@ -90,7 +92,7 @@ class CurrencyExchangeFragment : Fragment() {
             val inputCurrency = currencyExchangeInputAdapter?.inputCurrency
             val outputCurrency = currencyExchangeInputAdapter?.outputCurrency
 //            todo переделать
-            val inputNumber = currencyExchangeOutputAdapter?.inputNumber?.toDoubleOrNull()
+            val inputNumber = currencyExchangeInputAdapter?.inputNumber?.toDoubleOrNull()
             Log.i("kpop", currencyExchangeInputAdapter?.inputNumber.toString())
             if (inputCurrency == null || outputCurrency == null || inputNumber == null) return@setOnClickListener
 

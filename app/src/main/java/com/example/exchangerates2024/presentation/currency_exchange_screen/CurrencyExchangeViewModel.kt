@@ -2,6 +2,7 @@ package com.example.exchangerates2024.presentation.currency_exchange_screen
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.example.exchangerates2024.App
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.SingleLiveEvent
@@ -18,14 +19,14 @@ class CurrencyExchangeViewModel(private val application: Application) :
     @Inject
     lateinit var accountsUseCases: UserAccountsUseCases
 
-    val currencyRatesSLE: SingleLiveEvent<List<CurrencyRateEntity>>
+    val currencyRatesMLE: MutableLiveData<List<CurrencyRateEntity>>
 
     val showDialogSLE = SingleLiveEvent<String>()
 
     init {
         (application as App).component.inject(this)
 
-        currencyRatesSLE = currencyRatesUseCases.currencyRatesSLE
+        currencyRatesMLE = currencyRatesUseCases.currencyRatesSLE
 
         currencyRatesUseCases.updateCurrencyRates(context = application.applicationContext)
     }
@@ -50,7 +51,12 @@ class CurrencyExchangeViewModel(private val application: Application) :
         }
         val userOutputAccountValue =
             accountsUseCases.getAccountValueByCurrency(application, outputCurrency.name)
-        val outputNumber = inputNumber * outputCurrency.value / inputCurrency.value
+
+        val outputNumber =  accountsUseCases.convertStringToAnotherCurrencyValue(
+            inputNumber,
+            inputCurrency,
+            outputCurrency
+        )
 
         accountsUseCases.setAccountValueByCurrency(
             application,
@@ -62,8 +68,10 @@ class CurrencyExchangeViewModel(private val application: Application) :
             outputCurrency.name,
             userOutputAccountValue + outputNumber
         )
-//        todo вывести список валют:
-        showDialogSLE.value = "Receipt: ${outputCurrency.sign}${formatDouble(outputNumber, 2)}to account ${outputCurrency.name}."
+//        todo вывести список валют: и перенести в строки
+        showDialogSLE.value = "Receipt: ${outputCurrency.sign}${formatDouble(outputNumber, 2)} to account ${outputCurrency.name}."
+
+        currencyRatesUseCases.updateCurrencyRates(context = application.applicationContext)
     }
 //    todo перенести в другой класс
     fun formatDouble(number: Double, decimalCount: Int): String {

@@ -1,6 +1,7 @@
 package com.example.exchangerates2024.domain.use_cases
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.example.exchangerates2024.App
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.SingleLiveEvent
@@ -20,7 +21,7 @@ class CurrencyRatesUseCases {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    val currencyRatesSLE = SingleLiveEvent<List<CurrencyRateEntity>>()
+    val currencyRatesSLE = MutableLiveData<List<CurrencyRateEntity>>()
 
     init {
         App().component.inject(this)
@@ -28,6 +29,7 @@ class CurrencyRatesUseCases {
 
     fun updateCurrencyRates(context: Context) {
 //       NOTE: Для создания запроса с повторением
+//        todo change sec
         val disposable = Observable.interval(0, 30, TimeUnit.SECONDS)
             .flatMapSingle { exchangeRateRepository.getRatesInfo() }
             .subscribeOn(Schedulers.io())
