@@ -62,8 +62,13 @@ class CurrencyExchangeViewModel(private val application: Application) :
             outputCurrency.name,
             userOutputAccountValue + outputNumber
         )
+//        todo вывести список валют:
+        showDialogSLE.value = "Receipt: ${outputCurrency.sign}${formatDouble(outputNumber, 2)}to account ${outputCurrency.name}."
     }
-
+//    todo перенести в другой класс
+    fun formatDouble(number: Double, decimalCount: Int): String {
+        return String.format("%.${decimalCount}f", number).replace(',','.')
+    }
     override fun onCleared() {
         super.onCleared()
         currencyRatesUseCases.dispose()

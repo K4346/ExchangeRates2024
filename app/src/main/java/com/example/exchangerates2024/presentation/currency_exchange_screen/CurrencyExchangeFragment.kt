@@ -107,8 +107,6 @@ class CurrencyExchangeFragment : Fragment() {
         alertDialogBuilder.setPositiveButton("Ok") { dialog, _ ->
             dialog.dismiss()
         }
-
-        // Создаем и отображаем диалог
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }

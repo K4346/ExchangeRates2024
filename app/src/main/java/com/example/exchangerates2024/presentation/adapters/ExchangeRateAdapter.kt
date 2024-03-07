@@ -15,6 +15,7 @@ import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
 import javax.inject.Inject
 
 class ExchangeRateAdapter(
+//    NOTE: Контекст приложения не меняется на протяжении всего жизненного цикла приложения
     private val appContext: Context,
     val changeInputCurrencyListener: (inputCurrency: CurrencyRateEntity) -> Unit,
     val inputNumberChangeListener: (inputNumber: String) -> Unit
@@ -77,7 +78,10 @@ lateinit var userAccountsUseCases: UserAccountsUseCases
                         )
                     )
                 }
-                tvAccount.text = userAccountsUseCases.getAccountValueByCurrency(appContext,inputCurrency!!.name).toString()
+                val userAccountValue = userAccountsUseCases.getAccountValueByCurrency(appContext,inputCurrency!!.name).toString()
+                tvAccount.text =
+                    appContext.getString(R.string.you_have, userAccountValue, inputCurrency!!.sign)
+                
             }
 
 //            todo позапихивать все в минифункции

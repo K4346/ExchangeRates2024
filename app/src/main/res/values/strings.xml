@@ -12,4 +12,5 @@
     <string name="insufficient_funds_in_the_account">Insufficient funds in the account</string>
     <string name="one_account_is_selected">One account is selected</string>
     <string name="accounts_info">Accounts Info</string>
+    <string name="you_have">You have: %1$s%2$s</string>
 </resources>
