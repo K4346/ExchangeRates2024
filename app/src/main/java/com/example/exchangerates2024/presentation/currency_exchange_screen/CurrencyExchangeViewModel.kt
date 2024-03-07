@@ -36,8 +36,7 @@ class CurrencyExchangeViewModel(private val application: Application) :
         outputCurrency: CurrencyRateEntity,
         inputNumber: Double
     ) {
-
-        if (inputCurrency.name==outputCurrency.name){
+        if (inputCurrency.name == outputCurrency.name) {
             showDialogSLE.value = application.getString(R.string.one_account_is_selected)
             return
         }
@@ -52,7 +51,7 @@ class CurrencyExchangeViewModel(private val application: Application) :
         val userOutputAccountValue =
             accountsUseCases.getAccountValueByCurrency(application, outputCurrency.name)
 
-        val outputNumber =  accountsUseCases.convertStringToAnotherCurrencyValue(
+        val outputNumber = accountsUseCases.convertStringToAnotherCurrencyValue(
             inputNumber,
             inputCurrency,
             outputCurrency
@@ -68,15 +67,37 @@ class CurrencyExchangeViewModel(private val application: Application) :
             outputCurrency.name,
             userOutputAccountValue + outputNumber
         )
-//        todo вывести список валют: и перенести в строки
-        showDialogSLE.value = "Receipt: ${outputCurrency.sign}${formatDouble(outputNumber, 2)} to account ${outputCurrency.name}."
+
+       val dialogMessage = makeDialogMessage(outputCurrency,outputNumber)
+        showDialogSLE.value = dialogMessage.toString()
 
         currencyRatesUseCases.updateCurrencyRates(context = application.applicationContext)
     }
-//    todo перенести в другой класс
-    fun formatDouble(number: Double, decimalCount: Int): String {
-        return String.format("%.${decimalCount}f", number).replace(',','.')
+
+    private fun makeDialogMessage(outputCurrency: CurrencyRateEntity, outputNumber: Double) {
+        val dialogMessage = StringBuilder()
+        val accountsInfo =
+            accountsUseCases.getAvailableAccountsInfo(application, getCurrencyRates())
+        dialogMessage.append(
+            application.getString(
+                R.string.receipt_to_account, outputCurrency.sign, formatDouble(
+                    outputNumber,
+                    2
+                ), outputCurrency.name
+            )
+        )
+        dialogMessage.append("\n")
+        dialogMessage.append(accountsInfo)
     }
+//    todo перенести в другой класс
+
+    private fun getCurrencyRates() = currencyRatesMLE.value
+
+    //    todo сделать что-нибудь с этой функцией
+    fun formatDouble(number: Double, decimalCount: Int): String {
+        return String.format("%.${decimalCount}f", number).replace(',', '.')
+    }
+
     override fun onCleared() {
         super.onCleared()
         currencyRatesUseCases.dispose()

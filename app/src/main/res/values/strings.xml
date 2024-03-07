@@ -4,7 +4,7 @@
     <string name="gbp">GBP</string>
     <string name="usd">USD</string>
     <string name="eur">EUR</string>
-    <string name="_0_00">0.00</string>
+    <string name="default_currency_rate_value">0.00</string>
     <string name="sign_usd">$</string>
     <string name="sign_eur">€</string>
     <string name="sign_gbp">£</string>
@@ -13,4 +13,6 @@
     <string name="one_account_is_selected">One account is selected</string>
     <string name="accounts_info">Accounts Info</string>
     <string name="you_have">You have: %1$s%2$s</string>
+    <string name="ok">Ok</string>
+    <string name="receipt_to_account">Receipt: %1$s%2$s to account %3$s.</string>
 </resources>

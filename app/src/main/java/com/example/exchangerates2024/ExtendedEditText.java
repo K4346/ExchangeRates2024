@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 
 import java.util.ArrayList;
 
+// NOTE: Добавил для оптимизации работы с слушателями
 public class ExtendedEditText extends androidx.appcompat.widget.AppCompatEditText
 {
     private ArrayList<TextWatcher> mListeners = null;

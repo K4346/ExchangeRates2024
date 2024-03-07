@@ -17,7 +17,8 @@ class UserAccountsRepositoryImpl : UserAccountsRepository {
     override fun getUserAccount(context: Context, currencyName: String): Float {
         return userAccountsInfoDB.getUserCurrencyAccount(context, currencyName)
     }
-    override fun setUserAccountValue(context: Context, currencyName: String,currencyValue:Float) {
-        return userAccountsInfoDB.setUserCurrencyAccountValue(context, currencyName,currencyValue)
+
+    override fun setUserAccountValue(context: Context, currencyName: String, currencyValue: Float) {
+        return userAccountsInfoDB.setUserCurrencyAccountValue(context, currencyName, currencyValue)
     }
 }

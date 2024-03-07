@@ -5,10 +5,6 @@ import io.reactivex.Single
 
 interface ExchangeRateInfoRepository {
 
-        fun getRatesInfo(): Single<RatesDataInfoEntity>
-//        todo
-//        fun getWeatherSummaryFromDB(context: Context): LiveData<RatesInfoEntity?>
-//
-//        fun insertWeatherSummaryToDB(context: Context, weatherSummaryEntity: RatesInfoEntity)
+    fun getRatesInfo(): Single<RatesDataInfoEntity>
 
 }

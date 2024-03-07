@@ -3,10 +3,12 @@ package com.example.exchangerates2024.presentation.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.exchangerates2024.App
+import com.example.exchangerates2024.ExtendedEditText
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.databinding.RateItemBinding
 import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
@@ -23,7 +25,7 @@ class ExchangeRateAdapter(
     @Inject
     lateinit var userAccountsUseCases: UserAccountsUseCases
 
-    private val DEFAULT_INPUT_VALUE = "0.00"
+    private val defaultCurrencyValue = ""
 
     init {
         App().component.inject(this)
@@ -38,31 +40,17 @@ class ExchangeRateAdapter(
         }
     var outputCurrency: CurrencyRateEntity? = null
 
-    var lastCurrency: CurrencyRateEntity? = null
+    private var lastCurrency: CurrencyRateEntity? = null
 
-    var inputNumber = DEFAULT_INPUT_VALUE
+    var inputNumber = defaultCurrencyValue
         set(value) {
             if (field == value) return
             field = value
-            if (value != formatDouble(
-                    userAccountsUseCases.convertStringToAnotherCurrencyValue(
-                        outputNumber.toDoubleOrNull() ?: 0.0,
-                        outputCurrency!!,
-                        inputCurrency!!
-                    ), 2
-                )
-            ) {
-                outputNumber = formatDouble(
-                    userAccountsUseCases.convertStringToAnotherCurrencyValue(
-                        value.toDoubleOrNull() ?: 0.0,
-                        inputCurrency!!,
-                        outputCurrency!!
-                    ), 2
-                )
-                inputNumberChangeListener(value, outputNumber)
-            }
+            onInputNumberChange(value)
+
         }
-    var outputNumber = DEFAULT_INPUT_VALUE
+
+    var outputNumber = defaultCurrencyValue
 
     var rates: List<CurrencyRateEntity> = listOf()
         set(value) {
@@ -86,41 +74,68 @@ class ExchangeRateAdapter(
             inputCurrency = rates[position]
             tvCurrency.text = inputCurrency?.name
             if (outputCurrency != null && inputCurrency != null) {
-//                todo пусть этим занимаются другие функции а еще лучше классы
-//                todo сделать проверку на ноль и убрать !!
-
-                tvRate.text =
-                    appContext.getString(
-                        R.string.currency_exchange_rate, inputCurrency?.sign, formatDouble(
-                            outputCurrency!!.value / inputCurrency!!.value,
-                            2
-                        ), outputCurrency!!.sign
-                    )
-                if (lastCurrency != null && inputCurrency != lastCurrency) {
-                    etCurrencyValue.setText(DEFAULT_INPUT_VALUE)
-                } else if (inputNumber != etCurrencyValue.text.toString())
-                    etCurrencyValue.setText(inputNumber)
-
-
+                makeTvRate(tvRate)
+                setEditTextCurrencyValue(etCurrencyValue)
                 lastCurrency = inputCurrency
-
-                val userAccountValue =
-                    userAccountsUseCases.getAccountValueByCurrency(appContext, inputCurrency!!.name)
-                tvAccount.text = appContext.getString(
-                    R.string.you_have,
-                    formatDouble(userAccountValue, 2),
-                    inputCurrency!!.sign
-                )
-
+                makeTvAccount(tvAccount)
             }
 
-//            todo позапихивать все в минифункции
+            initEditTextCurrencyValueListeners(etCurrencyValue)
+        }
+    }
 
-            etCurrencyValue.clearTextChangedListeners()
-            etCurrencyValue.addTextChangedListener {
-                if (countDecimalPlaces(it.toString()) > 2) etCurrencyValue.setText(inputNumber)
-                else inputNumber = it.toString()
-            }
+    private fun initEditTextCurrencyValueListeners(etCurrencyValue: ExtendedEditText) {
+        etCurrencyValue.clearTextChangedListeners()
+        etCurrencyValue.addTextChangedListener {
+            if (countDecimalPlaces(it.toString()) > 2) etCurrencyValue.setText(inputNumber)
+            else inputNumber = it.toString()
+        }
+    }
+
+    private fun makeTvAccount(tvAccount: TextView) {
+        val userAccountValue =
+            userAccountsUseCases.getAccountValueByCurrency(appContext, inputCurrency!!.name)
+        tvAccount.text = appContext.getString(
+            R.string.you_have,
+            formatDouble(userAccountValue, 2),
+            inputCurrency!!.sign
+        )
+    }
+
+    private fun setEditTextCurrencyValue(etCurrencyValue: ExtendedEditText) {
+        if (lastCurrency != null && inputCurrency != lastCurrency) {
+            etCurrencyValue.setText(defaultCurrencyValue)
+        } else if (inputNumber != etCurrencyValue.text.toString())
+            etCurrencyValue.setText(inputNumber)
+    }
+
+    private fun makeTvRate(tvRate: TextView) {
+        tvRate.text =
+            appContext.getString(
+                R.string.currency_exchange_rate, inputCurrency?.sign, formatDouble(
+                    outputCurrency!!.value / inputCurrency!!.value,
+                    2
+                ), outputCurrency!!.sign
+            )
+    }
+
+    private fun onInputNumberChange(input: String) {
+        if (input != formatDouble(
+                userAccountsUseCases.convertStringToAnotherCurrencyValue(
+                    outputNumber.toDoubleOrNull() ?: 0.0,
+                    outputCurrency!!,
+                    inputCurrency!!
+                ), 2
+            )
+        ) {
+            outputNumber = formatDouble(
+                userAccountsUseCases.convertStringToAnotherCurrencyValue(
+                    input.toDoubleOrNull() ?: 0.0,
+                    inputCurrency!!,
+                    outputCurrency!!
+                ), 2
+            )
+            inputNumberChangeListener(input, outputNumber)
         }
     }
 
@@ -134,7 +149,6 @@ class ExchangeRateAdapter(
         }
     }
 
-    // todo возможно изменить слова
     inner class ExchangeRateViewHolder(itemView: RateItemBinding) : ViewHolder(itemView.root) {
         val tvCurrency = itemView.tvCurrency
         val etCurrencyValue = itemView.etCurrencyValue
@@ -142,6 +156,7 @@ class ExchangeRateAdapter(
         val tvRate = itemView.tvRate
     }
 
+    //    todo убрать
     fun formatDouble(number: Double, decimalCount: Int): String {
         return String.format("%.${decimalCount}f", number).replace(',', '.')
     }

@@ -14,7 +14,8 @@ class UseCasesModule {
     fun provideCurrencyRatesUseCases(): CurrencyRatesUseCases {
         return CurrencyRatesUseCases()
     }
-//    todo возможно стоит добавить интерфейс прокладку
+
+    //    todo возможно стоит добавить интерфейс прокладку
     @Provides
     @Singleton
     fun provideUserAccountUseCases(): UserAccountsUseCases {

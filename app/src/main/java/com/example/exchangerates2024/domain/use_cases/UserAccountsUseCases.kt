@@ -34,4 +34,27 @@ class UserAccountsUseCases {
         return inputNumber * outputCurrency.value / inputCurrency.value
     }
 
+    //    NOTE: Вывожу все доступные счета (с которыми можно провести операции)
+    fun getAvailableAccountsInfo(
+        context: Context,
+        availableCurrencyRates: List<CurrencyRateEntity>?
+    ): String {
+        val availableAccountsInfo = StringBuilder()
+        availableCurrencyRates?.forEachIndexed { index, it ->
+            val accountValue = getAccountValueByCurrency(context, it.name)
+            availableAccountsInfo.append(
+                "${it.name}: ${it.sign}${formatDouble(accountValue, 2)}"
+            )
+            if (index != availableCurrencyRates.lastIndex) {
+                availableAccountsInfo.append("\n")
+            }
+        }
+        return availableAccountsInfo.toString()
+    }
+
+    //    todo
+    fun formatDouble(number: Double, decimalCount: Int): String {
+        return String.format("%.${decimalCount}f", number).replace(',', '.')
+    }
+
 }

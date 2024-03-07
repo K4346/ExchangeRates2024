@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.example.exchangerates2024.App
 import com.example.exchangerates2024.R
-import com.example.exchangerates2024.SingleLiveEvent
 import com.example.exchangerates2024.data.entities.RatesDataInfoEntity
 import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
 import com.example.exchangerates2024.domain.repositories.ExchangeRateInfoRepository
@@ -12,6 +11,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

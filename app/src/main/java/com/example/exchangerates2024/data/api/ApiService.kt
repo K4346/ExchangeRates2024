@@ -10,5 +10,4 @@ interface ApiService {
     fun getRatesInfo(
     ): Single<RatesDataInfoEntity>
 
-
 }

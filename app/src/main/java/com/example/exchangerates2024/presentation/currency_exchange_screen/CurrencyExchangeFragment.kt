@@ -1,9 +1,7 @@
 package com.example.exchangerates2024.presentation.currency_exchange_screen
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +11,8 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.databinding.FragmentCurrencyExchangeBinding
 import com.example.exchangerates2024.presentation.adapters.ExchangeRateAdapter
+import com.example.exchangerates2024.presentation.dialogs.BasicAlertDialog
+
 
 class CurrencyExchangeFragment : Fragment() {
 
@@ -35,14 +35,20 @@ class CurrencyExchangeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initListeners()
+
         initObservers()
+
         initAdapters()
     }
 
     private fun initAdapters() {
-//        NOTE: Не самый оптимальный способ обновления данных, достаточно лишь менять всего 2 элемента при скролле, но в контексте данной задачи решил оставить как есть
-//       todo возможно стоит передавать еще и их положения чтоб не обновлять все
+        initInputAdapter()
+        initOutputAdapter()
+    }
+
+    private fun initInputAdapter() {
         currencyExchangeInputAdapter =
             ExchangeRateAdapter(requireContext().applicationContext, { currentCurrency ->
                 currencyExchangeOutputAdapter?.outputCurrency = currentCurrency
@@ -58,7 +64,9 @@ class CurrencyExchangeFragment : Fragment() {
             }
         binding.rvExchangeRateInput.adapter = currencyExchangeInputAdapter
         PagerSnapHelper().attachToRecyclerView(binding.rvExchangeRateInput)
+    }
 
+    private fun initOutputAdapter() {
         currencyExchangeOutputAdapter =
             ExchangeRateAdapter(requireContext().applicationContext, { currentCurrency ->
                 currencyExchangeInputAdapter?.outputCurrency = currentCurrency
@@ -78,7 +86,6 @@ class CurrencyExchangeFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.currencyRatesMLE.observe(viewLifecycleOwner) {
-
             currencyExchangeInputAdapter?.rates = it
             currencyExchangeOutputAdapter?.rates = it
         }
@@ -91,9 +98,7 @@ class CurrencyExchangeFragment : Fragment() {
         binding.buttonExchangeCurrencies.setOnClickListener {
             val inputCurrency = currencyExchangeInputAdapter?.inputCurrency
             val outputCurrency = currencyExchangeInputAdapter?.outputCurrency
-//            todo переделать
             val inputNumber = currencyExchangeInputAdapter?.inputNumber?.toDoubleOrNull()
-            Log.i("kpop", currencyExchangeInputAdapter?.inputNumber.toString())
             if (inputCurrency == null || outputCurrency == null || inputNumber == null) return@setOnClickListener
 
             viewModel.prepareDialogInfo(inputCurrency, outputCurrency, inputNumber)
@@ -101,16 +106,7 @@ class CurrencyExchangeFragment : Fragment() {
     }
 
     private fun showAlertDialog(context: Context, title: String, message: String) {
-        val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle(title)
-
-        alertDialogBuilder.setMessage(message)
-
-        alertDialogBuilder.setPositiveButton("Ok") { dialog, _ ->
-            dialog.dismiss()
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
+        BasicAlertDialog().getDialog(context, title, message).show()
     }
 
     override fun onDestroyView() {

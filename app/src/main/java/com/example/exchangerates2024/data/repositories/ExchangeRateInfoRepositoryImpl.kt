@@ -12,7 +12,6 @@ class ExchangeRateInfoRepositoryImpl : ExchangeRateInfoRepository {
     @Inject
     lateinit var apiService: ApiService
 
-    //    todo это норм?
     init {
         App().component.inject(this)
     }

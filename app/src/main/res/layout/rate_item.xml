@@ -24,7 +24,7 @@
             android:id="@+id/etCurrencyValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_0_00"
+            android:hint="@string/default_currency_rate_value"
             android:textSize="30sp"
             android:inputType="numberDecimal"
             app:layout_constraintEnd_toEndOf="parent"
