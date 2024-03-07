@@ -12,7 +12,7 @@ class ExampleUnitTest {
 
     @Test
     fun currencyValueEditUseCases_isCorrect() {
-//        countDecimalPlaces
+        //        countDecimalPlaces
         val test1Value = currencyValueEditUseCases.countDecimalPlaces("666")
         val test2Value = currencyValueEditUseCases.countDecimalPlaces("555.9")
         val test3Value = currencyValueEditUseCases.countDecimalPlaces("0.00")
