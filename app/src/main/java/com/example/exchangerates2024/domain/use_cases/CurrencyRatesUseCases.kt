@@ -28,19 +28,16 @@ class CurrencyRatesUseCases {
 
     fun updateCurrencyRates(context: Context) {
 //       NOTE: Для создания запроса с повторением
-//        todo change sec
         val disposable = Observable.interval(0, 30, TimeUnit.SECONDS)
             .flatMapSingle { exchangeRateRepository.getRatesInfo() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 currencyRatesSLE.value = prepareCurrencyRatesData(it, context)
             }, {
-//todo обработать?
             })
         compositeDisposable.add(disposable)
     }
 
-    //    todo возможно оформить в другой класс
     private fun prepareCurrencyRatesData(
         ratesDataInfo: RatesDataInfoEntity,
         context: Context

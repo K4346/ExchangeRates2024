@@ -7,7 +7,7 @@ import com.example.exchangerates2024.R
 // NOTE: В задании ничего не сказано про работу с бд (например рум), поэтому для счетов я решил использовать обычный жесткозакодированный sharedPreferences
 class UserAccountsInfoDataBase {
 
-    //    todo хорошей практикой является достать значения SP 1 раз и менять при изменении (так как чтение из бд обходится дороже), в связи с тем что в задании не было описано конкретики по сохранению данных, решил не усложнять
+    //    NOTE: хорошей практикой является достать значения SP 1 раз и менять при изменении (так как чтение из бд обходится дороже), в связи с тем что в задании не было описано конкретики по сохранению данных, решил не усложнять
     fun getUserCurrencyAccount(context: Context, currencyName: String): Float {
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences(EXCHANGE_RATES_STORAGE, Context.MODE_PRIVATE)
