@@ -14,19 +14,27 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CurrencyRatesUseCases {
+interface CurrencyRatesUseCases {
+    fun updateCurrencyRates(context: Context)
+    fun dispose()
+
+    val currencyRatesSLE: MutableLiveData<List<CurrencyRateEntity>>
+
+}
+
+class CurrencyRatesUseCasesImpl : CurrencyRatesUseCases {
     @Inject
     lateinit var exchangeRateRepository: ExchangeRateInfoRepository
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    val currencyRatesSLE = MutableLiveData<List<CurrencyRateEntity>>()
+    override val currencyRatesSLE = MutableLiveData<List<CurrencyRateEntity>>()
 
     init {
         App().component.inject(this)
     }
 
-    fun updateCurrencyRates(context: Context) {
+    override fun updateCurrencyRates(context: Context) {
 //       NOTE: Для создания запроса с повторением
         val disposable = Observable.interval(0, 30, TimeUnit.SECONDS)
             .flatMapSingle { exchangeRateRepository.getRatesInfo() }
@@ -68,7 +76,7 @@ class CurrencyRatesUseCases {
         return rates
     }
 
-    fun dispose() {
+    override fun dispose() {
         compositeDisposable.dispose()
     }
 

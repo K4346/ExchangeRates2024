@@ -73,12 +73,15 @@ class CurrencyExchangeViewModel(private val application: Application) :
         )
 
         val dialogMessage = makeDialogMessage(outputCurrency, outputNumber)
-        showDialogSLE.value = dialogMessage.toString()
+        showDialogSLE.value = dialogMessage
 
         currencyRatesUseCases.updateCurrencyRates(context = application.applicationContext)
     }
 
-    private fun makeDialogMessage(outputCurrency: CurrencyRateEntity, outputNumber: Double) {
+    private fun makeDialogMessage(
+        outputCurrency: CurrencyRateEntity,
+        outputNumber: Double
+    ): String {
         val dialogMessage = StringBuilder()
         val accountsInfo =
             accountsUseCases.getAvailableAccountsInfo(application, getCurrencyRates())
@@ -92,6 +95,7 @@ class CurrencyExchangeViewModel(private val application: Application) :
         )
         dialogMessage.append("\n")
         dialogMessage.append(accountsInfo)
+        return dialogMessage.toString()
     }
 
     private fun getCurrencyRates() = currencyRatesMLE.value

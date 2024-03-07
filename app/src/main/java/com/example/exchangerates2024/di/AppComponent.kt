@@ -2,8 +2,8 @@ package com.example.exchangerates2024.di
 
 import com.example.exchangerates2024.data.repositories.ExchangeRateInfoRepositoryImpl
 import com.example.exchangerates2024.data.repositories.UserAccountsRepositoryImpl
-import com.example.exchangerates2024.domain.use_cases.CurrencyRatesUseCases
-import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
+import com.example.exchangerates2024.domain.use_cases.CurrencyRatesUseCasesImpl
+import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCasesImpl
 import com.example.exchangerates2024.presentation.adapters.ExchangeRateAdapter
 import com.example.exchangerates2024.presentation.currency_exchange_screen.CurrencyExchangeViewModel
 import dagger.Component
@@ -17,7 +17,7 @@ interface AppComponent {
     fun inject(repository: UserAccountsRepositoryImpl)
     fun inject(adapter: ExchangeRateAdapter)
     fun inject(viewModel: CurrencyExchangeViewModel)
-    fun inject(useCases: UserAccountsUseCases)
-    fun inject(useCases: CurrencyRatesUseCases)
+    fun inject(useCases: UserAccountsUseCasesImpl)
+    fun inject(useCases: CurrencyRatesUseCasesImpl)
 
 }

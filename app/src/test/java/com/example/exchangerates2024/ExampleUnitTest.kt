@@ -1,21 +1,15 @@
 package com.example.exchangerates2024
 
 import com.example.exchangerates2024.domain.use_cases.CurrencyValueEditUseCases
+import com.example.exchangerates2024.domain.use_cases.CurrencyValueEditUseCasesImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
 
-    private val currencyValueEditUseCases = CurrencyValueEditUseCases()
+class ExampleUnitTest {
+    private val currencyValueEditUseCases: CurrencyValueEditUseCases =
+        CurrencyValueEditUseCasesImpl()
+
     @Test
     fun currencyValueEditUseCases_isCorrect() {
 //        countDecimalPlaces

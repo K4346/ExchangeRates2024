@@ -6,7 +6,7 @@ import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
 import com.example.exchangerates2024.domain.repositories.UserAccountsRepository
 import javax.inject.Inject
 
-class UserAccountsUseCases {
+class UserAccountsUseCasesImpl : UserAccountsUseCases {
     @Inject
     lateinit var userAccountsRepository: UserAccountsRepository
 
@@ -17,11 +17,15 @@ class UserAccountsUseCases {
         App().component.inject(this)
     }
 
-    fun getAccountValueByCurrency(context: Context, currencyName: String): Double {
+    override fun getAccountValueByCurrency(context: Context, currencyName: String): Double {
         return userAccountsRepository.getUserAccount(context, currencyName).toDouble()
     }
 
-    fun setAccountValueByCurrency(context: Context, currencyName: String, currencyValue: Double) {
+    override fun setAccountValueByCurrency(
+        context: Context,
+        currencyName: String,
+        currencyValue: Double
+    ) {
         return userAccountsRepository.setUserAccountValue(
             context,
             currencyName,
@@ -29,7 +33,7 @@ class UserAccountsUseCases {
         )
     }
 
-    fun convertStringToAnotherCurrencyValue(
+    override fun convertStringToAnotherCurrencyValue(
         inputNumber: Double,
         inputCurrency: CurrencyRateEntity,
         outputCurrency: CurrencyRateEntity
@@ -38,7 +42,7 @@ class UserAccountsUseCases {
     }
 
     //    NOTE: Вывожу все доступные счета (с которыми можно провести операции)
-    fun getAvailableAccountsInfo(
+    override fun getAvailableAccountsInfo(
         context: Context,
         availableCurrencyRates: List<CurrencyRateEntity>?
     ): String {
@@ -55,4 +59,24 @@ class UserAccountsUseCases {
         return availableAccountsInfo.toString()
     }
 
+}
+
+interface UserAccountsUseCases {
+
+
+    fun getAccountValueByCurrency(context: Context, currencyName: String): Double
+
+    fun setAccountValueByCurrency(context: Context, currencyName: String, currencyValue: Double)
+
+    fun convertStringToAnotherCurrencyValue(
+        inputNumber: Double,
+        inputCurrency: CurrencyRateEntity,
+        outputCurrency: CurrencyRateEntity
+    ): Double
+
+    //    NOTE: Вывожу все доступные счета (с которыми можно провести операции)
+    fun getAvailableAccountsInfo(
+        context: Context,
+        availableCurrencyRates: List<CurrencyRateEntity>?
+    ): String
 }
