@@ -1,14 +1,18 @@
 package com.example.exchangerates2024.presentation.currency_exchange_screen
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.example.exchangerates2024.R
 import com.example.exchangerates2024.databinding.FragmentCurrencyExchangeBinding
-import com.example.exchangerates2024.presentation.currency_exchange_screen.adapters.ExchangeRateAdapter
+import com.example.exchangerates2024.presentation.adapters.ExchangeRateAdapter
 
 class CurrencyExchangeFragment : Fragment() {
 
@@ -23,9 +27,7 @@ class CurrencyExchangeFragment : Fragment() {
     private var currencyExchangeOutputAdapter: ExchangeRateAdapter? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCurrencyExchangeBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,31 +43,33 @@ class CurrencyExchangeFragment : Fragment() {
     private fun initAdapters() {
 //        NOTE: Не самый оптимальный способ обновления данных, достаточно лишь менять всего 2 элемента при скролле, но в контексте данной задачи решил оставить как есть
 //       todo возможно стоит передавать еще и их положения чтоб не обновлять все
-        currencyExchangeInputAdapter = ExchangeRateAdapter(resources, { currentCurrency ->
-            currencyExchangeOutputAdapter?.outputCurrency = currentCurrency
-            requireActivity().currentFocus?.clearFocus()
-            binding.rvExchangeRateInput.postDelayed({
-                currencyExchangeInputAdapter?.notifyDataSetChanged()
+        currencyExchangeInputAdapter =
+            ExchangeRateAdapter(requireContext().applicationContext, { currentCurrency ->
+                currencyExchangeOutputAdapter?.outputCurrency = currentCurrency
+                requireActivity().currentFocus?.clearFocus()
+                binding.rvExchangeRateInput.postDelayed({
+                    currencyExchangeInputAdapter?.notifyDataSetChanged()
+                    currencyExchangeOutputAdapter?.notifyDataSetChanged()
+                }, 300)
+            }) { inputNumber ->
+                currencyExchangeOutputAdapter?.inputNumber = inputNumber
                 currencyExchangeOutputAdapter?.notifyDataSetChanged()
-            }, 300)
-        }, { inputNumber ->
-            currencyExchangeOutputAdapter?.inputNumber = inputNumber
-            currencyExchangeOutputAdapter?.notifyDataSetChanged()
-        })
+            }
         currencyExchangeInputAdapter?.inputFlag = true
         binding.rvExchangeRateInput.adapter = currencyExchangeInputAdapter
         PagerSnapHelper().attachToRecyclerView(binding.rvExchangeRateInput)
 
-        currencyExchangeOutputAdapter = ExchangeRateAdapter(resources, { currentCurrency ->
-            currencyExchangeInputAdapter?.outputCurrency = currentCurrency
-            requireActivity().currentFocus?.clearFocus()
-            binding.rvExchangeRateOutput.postDelayed({
-                currencyExchangeInputAdapter?.notifyDataSetChanged()
-                currencyExchangeOutputAdapter?.notifyDataSetChanged()
-            }, 300)
-        }, { inputNumber ->
+        currencyExchangeOutputAdapter =
+            ExchangeRateAdapter(requireContext().applicationContext, { currentCurrency ->
+                currencyExchangeInputAdapter?.outputCurrency = currentCurrency
+                requireActivity().currentFocus?.clearFocus()
+                binding.rvExchangeRateOutput.postDelayed({
+                    currencyExchangeInputAdapter?.notifyDataSetChanged()
+                    currencyExchangeOutputAdapter?.notifyDataSetChanged()
+                }, 300)
+            }) { inputNumber ->
 //            currencyExchangeInputAdapter?.inputNumber = inputNumber
-        })
+            }
         currencyExchangeOutputAdapter?.inputFlag = false
         binding.rvExchangeRateOutput.adapter = currencyExchangeOutputAdapter
         PagerSnapHelper().attachToRecyclerView(binding.rvExchangeRateOutput)
@@ -76,10 +80,37 @@ class CurrencyExchangeFragment : Fragment() {
             currencyExchangeInputAdapter?.rates = it
             currencyExchangeOutputAdapter?.rates = it
         }
+        viewModel.showDialogSLE.observe(viewLifecycleOwner) { dialogMessage ->
+            showAlertDialog(requireContext(), getString(R.string.accounts_info), dialogMessage)
+        }
     }
 
     private fun initListeners() {
+        binding.buttonExchangeCurrencies.setOnClickListener {
+            val inputCurrency = currencyExchangeInputAdapter?.inputCurrency
+            val outputCurrency = currencyExchangeInputAdapter?.outputCurrency
+//            todo переделать
+            val inputNumber = currencyExchangeOutputAdapter?.inputNumber?.toDoubleOrNull()
+            Log.i("kpop", currencyExchangeInputAdapter?.inputNumber.toString())
+            if (inputCurrency == null || outputCurrency == null || inputNumber == null) return@setOnClickListener
 
+            viewModel.prepareDialogInfo(inputCurrency, outputCurrency, inputNumber)
+        }
+    }
+
+    private fun showAlertDialog(context: Context, title: String, message: String) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setTitle(title)
+
+        alertDialogBuilder.setMessage(message)
+
+        alertDialogBuilder.setPositiveButton("Ok") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Создаем и отображаем диалог
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
     override fun onDestroyView() {

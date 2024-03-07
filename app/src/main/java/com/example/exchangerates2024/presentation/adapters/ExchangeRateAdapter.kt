@@ -1,26 +1,30 @@
-package com.example.exchangerates2024.presentation.currency_exchange_screen.adapters
+package com.example.exchangerates2024.presentation.adapters
 
-import android.content.res.Resources
-import android.text.Editable
-import android.text.TextWatcher
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.exchangerates2024.App
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.databinding.RateItemBinding
 import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
+import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
+import javax.inject.Inject
 
 class ExchangeRateAdapter(
-    private val resources: Resources,
+    private val appContext: Context,
     val changeInputCurrencyListener: (inputCurrency: CurrencyRateEntity) -> Unit,
     val inputNumberChangeListener: (inputNumber: String) -> Unit
 ) :
     RecyclerView.Adapter<ExchangeRateAdapter.ExchangeRateViewHolder>() {
-
+@Inject
+lateinit var userAccountsUseCases: UserAccountsUseCases
+    init {
+        App().component.inject(this)
+    }
     var inputCurrency: CurrencyRateEntity? = null
         set(value) {
             if (value != null && field != value) {
@@ -60,7 +64,7 @@ class ExchangeRateAdapter(
 //                todo сделать проверку на ноль и убрать !!
 
                 tvRate.text =
-                    resources.getString(
+                    appContext.getString(
                         R.string.currency_exchange_rate, inputCurrency?.sign, formatDouble(
                             outputCurrency!!.value / inputCurrency!!.value,
                             2
@@ -73,29 +77,20 @@ class ExchangeRateAdapter(
                         )
                     )
                 }
-
+                tvAccount.text = userAccountsUseCases.getAccountValueByCurrency(appContext,inputCurrency!!.name).toString()
             }
 
 //            todo позапихивать все в минифункции
 
-            val textWatcher = object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            etCurrencyValue.clearTextChangedListeners()
+            etCurrencyValue.addTextChangedListener {
+                if (etCurrencyValue.isFocusable){
+                    Log.i("kpop",etCurrencyValue.isFocusable.toString())
                 }
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
-                override fun afterTextChanged(p0: Editable?) {
-//                    todo сделать другую проверку через отдельный класс с операциями на числа
-                    if (etCurrencyValue.isFocusable){
-                        Log.i("kpop",etCurrencyValue.isFocusable.toString())
-                    }
-                    if (inputFlag) {
-                        inputNumberChangeListener(p0.toString())
-                    }
-
+                if (inputFlag) {
+                    inputNumberChangeListener(it.toString())
                 }
             }
-            etCurrencyValue.clearTextChangedListeners()
-            etCurrencyValue.addTextChangedListener(textWatcher)
         }
     }
 

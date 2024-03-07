@@ -33,7 +33,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/rate_item" />
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonExchangeCurrencies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

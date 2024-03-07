@@ -9,4 +9,7 @@
     <string name="sign_eur">€</string>
     <string name="sign_gbp">£</string>
     <string name="currency_exchange_rate">1%1$s = %2$s%3$s</string>
+    <string name="insufficient_funds_in_the_account">Insufficient funds in the account</string>
+    <string name="one_account_is_selected">One account is selected</string>
+    <string name="accounts_info">Accounts Info</string>
 </resources>
