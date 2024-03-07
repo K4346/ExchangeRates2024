@@ -10,6 +10,9 @@ class UserAccountsUseCases {
     @Inject
     lateinit var userAccountsRepository: UserAccountsRepository
 
+    @Inject
+    lateinit var editUseCase: CurrencyValueEditUseCases
+
     init {
         App().component.inject(this)
     }
@@ -43,18 +46,13 @@ class UserAccountsUseCases {
         availableCurrencyRates?.forEachIndexed { index, it ->
             val accountValue = getAccountValueByCurrency(context, it.name)
             availableAccountsInfo.append(
-                "${it.name}: ${it.sign}${formatDouble(accountValue, 2)}"
+                "${it.name}: ${it.sign}${editUseCase.formatDouble(accountValue, 2)}"
             )
             if (index != availableCurrencyRates.lastIndex) {
                 availableAccountsInfo.append("\n")
             }
         }
         return availableAccountsInfo.toString()
-    }
-
-    //    todo
-    fun formatDouble(number: Double, decimalCount: Int): String {
-        return String.format("%.${decimalCount}f", number).replace(',', '.')
     }
 
 }

@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/cvRateContainer"
     android:layout_margin="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/tvCurrency"
@@ -19,19 +19,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="EUR" />
-        <!--todo сделать лучше разметку-->
+
         <com.example.exchangerates2024.ExtendedEditText
             android:id="@+id/etCurrencyValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/default_currency_rate_value"
-            android:textSize="30sp"
             android:inputType="numberDecimal"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvCurrency"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias=".75"
             app:layout_constraintStart_toEndOf="@id/tvCurrency"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="1.0" />
-        <!--todo привести к виде на картинке-->
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/tvAccount"
             android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
             android:layout_marginTop="20dp"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etCurrencyValue"
+            app:layout_constraintTop_toBottomOf="@id/tvCurrency"
             tools:text="You have: 50.00$" />
 
         <TextView
@@ -47,8 +48,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tvAccount"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAccount"
+            app:layout_constraintEnd_toEndOf="@+id/etCurrencyValue"
+            app:layout_constraintStart_toStartOf="@+id/etCurrencyValue"
             app:layout_constraintTop_toTopOf="@id/tvAccount"
             tools:text="1$ = 1$" />
     </androidx.constraintlayout.widget.ConstraintLayout>

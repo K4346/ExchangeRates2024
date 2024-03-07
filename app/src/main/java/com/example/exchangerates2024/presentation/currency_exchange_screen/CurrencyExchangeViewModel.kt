@@ -8,6 +8,7 @@ import com.example.exchangerates2024.R
 import com.example.exchangerates2024.SingleLiveEvent
 import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
 import com.example.exchangerates2024.domain.use_cases.CurrencyRatesUseCases
+import com.example.exchangerates2024.domain.use_cases.CurrencyValueEditUseCases
 import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
 import javax.inject.Inject
 
@@ -18,6 +19,9 @@ class CurrencyExchangeViewModel(private val application: Application) :
 
     @Inject
     lateinit var accountsUseCases: UserAccountsUseCases
+
+    @Inject
+    lateinit var editUseCase: CurrencyValueEditUseCases
 
     val currencyRatesMLE: MutableLiveData<List<CurrencyRateEntity>>
 
@@ -68,7 +72,7 @@ class CurrencyExchangeViewModel(private val application: Application) :
             userOutputAccountValue + outputNumber
         )
 
-       val dialogMessage = makeDialogMessage(outputCurrency,outputNumber)
+        val dialogMessage = makeDialogMessage(outputCurrency, outputNumber)
         showDialogSLE.value = dialogMessage.toString()
 
         currencyRatesUseCases.updateCurrencyRates(context = application.applicationContext)
@@ -80,7 +84,7 @@ class CurrencyExchangeViewModel(private val application: Application) :
             accountsUseCases.getAvailableAccountsInfo(application, getCurrencyRates())
         dialogMessage.append(
             application.getString(
-                R.string.receipt_to_account, outputCurrency.sign, formatDouble(
+                R.string.receipt_to_account, outputCurrency.sign, editUseCase.formatDouble(
                     outputNumber,
                     2
                 ), outputCurrency.name
@@ -89,14 +93,9 @@ class CurrencyExchangeViewModel(private val application: Application) :
         dialogMessage.append("\n")
         dialogMessage.append(accountsInfo)
     }
-//    todo перенести в другой класс
 
     private fun getCurrencyRates() = currencyRatesMLE.value
 
-    //    todo сделать что-нибудь с этой функцией
-    fun formatDouble(number: Double, decimalCount: Int): String {
-        return String.format("%.${decimalCount}f", number).replace(',', '.')
-    }
 
     override fun onCleared() {
         super.onCleared()

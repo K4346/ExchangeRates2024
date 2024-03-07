@@ -1,6 +1,7 @@
 package com.example.exchangerates2024.di
 
 import com.example.exchangerates2024.domain.use_cases.CurrencyRatesUseCases
+import com.example.exchangerates2024.domain.use_cases.CurrencyValueEditUseCases
 import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
 import dagger.Module
 import dagger.Provides
@@ -20,5 +21,10 @@ class UseCasesModule {
     @Singleton
     fun provideUserAccountUseCases(): UserAccountsUseCases {
         return UserAccountsUseCases()
+    }
+    @Provides
+    @Singleton
+    fun provideCurrencyValueEditUseCases(): CurrencyValueEditUseCases {
+        return CurrencyValueEditUseCases()
     }
 }

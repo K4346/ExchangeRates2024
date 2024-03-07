@@ -12,6 +12,7 @@ import com.example.exchangerates2024.ExtendedEditText
 import com.example.exchangerates2024.R
 import com.example.exchangerates2024.databinding.RateItemBinding
 import com.example.exchangerates2024.domain.entities.CurrencyRateEntity
+import com.example.exchangerates2024.domain.use_cases.CurrencyValueEditUseCases
 import com.example.exchangerates2024.domain.use_cases.UserAccountsUseCases
 import javax.inject.Inject
 
@@ -24,6 +25,9 @@ class ExchangeRateAdapter(
     RecyclerView.Adapter<ExchangeRateAdapter.ExchangeRateViewHolder>() {
     @Inject
     lateinit var userAccountsUseCases: UserAccountsUseCases
+
+    @Inject
+    lateinit var editUseCase: CurrencyValueEditUseCases
 
     private val defaultCurrencyValue = ""
 
@@ -87,8 +91,12 @@ class ExchangeRateAdapter(
     private fun initEditTextCurrencyValueListeners(etCurrencyValue: ExtendedEditText) {
         etCurrencyValue.clearTextChangedListeners()
         etCurrencyValue.addTextChangedListener {
-            if (countDecimalPlaces(it.toString()) > 2) etCurrencyValue.setText(inputNumber)
-            else inputNumber = it.toString()
+            if (it.toString() == inputNumber) return@addTextChangedListener
+            if ((editUseCase.countDecimalPlaces(it.toString()) > 2) || it.toString().length > 6) {
+                etCurrencyValue.setText(inputNumber)
+            } else {
+                inputNumber = it.toString()
+            }
         }
     }
 
@@ -97,7 +105,7 @@ class ExchangeRateAdapter(
             userAccountsUseCases.getAccountValueByCurrency(appContext, inputCurrency!!.name)
         tvAccount.text = appContext.getString(
             R.string.you_have,
-            formatDouble(userAccountValue, 2),
+            editUseCase.formatDouble(userAccountValue, 2),
             inputCurrency!!.sign
         )
     }
@@ -112,7 +120,7 @@ class ExchangeRateAdapter(
     private fun makeTvRate(tvRate: TextView) {
         tvRate.text =
             appContext.getString(
-                R.string.currency_exchange_rate, inputCurrency?.sign, formatDouble(
+                R.string.currency_exchange_rate, inputCurrency?.sign, editUseCase.formatDouble(
                     outputCurrency!!.value / inputCurrency!!.value,
                     2
                 ), outputCurrency!!.sign
@@ -120,7 +128,7 @@ class ExchangeRateAdapter(
     }
 
     private fun onInputNumberChange(input: String) {
-        if (input != formatDouble(
+        if (input != editUseCase.formatDouble(
                 userAccountsUseCases.convertStringToAnotherCurrencyValue(
                     outputNumber.toDoubleOrNull() ?: 0.0,
                     outputCurrency!!,
@@ -128,7 +136,7 @@ class ExchangeRateAdapter(
                 ), 2
             )
         ) {
-            outputNumber = formatDouble(
+            outputNumber = editUseCase.formatDouble(
                 userAccountsUseCases.convertStringToAnotherCurrencyValue(
                     input.toDoubleOrNull() ?: 0.0,
                     inputCurrency!!,
@@ -139,15 +147,6 @@ class ExchangeRateAdapter(
         }
     }
 
-    //    todo перенести в класс для работы с цифрами
-    private fun countDecimalPlaces(input: String): Int {
-        val decimalIndex = input.indexOf('.')
-        return if (decimalIndex != -1) {
-            input.length - decimalIndex - 1
-        } else {
-            0
-        }
-    }
 
     inner class ExchangeRateViewHolder(itemView: RateItemBinding) : ViewHolder(itemView.root) {
         val tvCurrency = itemView.tvCurrency
@@ -156,9 +155,5 @@ class ExchangeRateAdapter(
         val tvRate = itemView.tvRate
     }
 
-    //    todo убрать
-    fun formatDouble(number: Double, decimalCount: Int): String {
-        return String.format("%.${decimalCount}f", number).replace(',', '.')
-    }
 
 }
