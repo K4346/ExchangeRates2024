@@ -112,7 +112,8 @@ class ExchangeRateAdapter(
 
     private fun setEditTextCurrencyValue(etCurrencyValue: ExtendedEditText) {
         if (lastCurrency != null && inputCurrency != lastCurrency) {
-            etCurrencyValue.setText(defaultCurrencyValue)
+            etCurrencyValue.setText(inputNumber)
+            onInputNumberChange(inputNumber)
         } else if (inputNumber != etCurrencyValue.text.toString())
             etCurrencyValue.setText(inputNumber)
     }

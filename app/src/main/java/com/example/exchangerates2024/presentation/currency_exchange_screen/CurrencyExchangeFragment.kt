@@ -57,7 +57,7 @@ class CurrencyExchangeFragment : Fragment() {
                 binding.rvExchangeRateInput.postDelayed({
                     currencyExchangeInputAdapter?.notifyDataSetChanged()
                     currencyExchangeOutputAdapter?.notifyDataSetChanged()
-                }, 300)
+                }, 0)
             }) { inputNumber, outputNumber ->
                 currencyExchangeOutputAdapter?.outputNumber = inputNumber
                 currencyExchangeOutputAdapter?.inputNumber = outputNumber
@@ -75,7 +75,7 @@ class CurrencyExchangeFragment : Fragment() {
                 binding.rvExchangeRateOutput.postDelayed({
                     currencyExchangeInputAdapter?.notifyDataSetChanged()
                     currencyExchangeOutputAdapter?.notifyDataSetChanged()
-                }, 300)
+                }, 0)
             }) { inputNumber, outputNumber ->
                 currencyExchangeInputAdapter?.outputNumber = inputNumber
                 currencyExchangeInputAdapter?.inputNumber = outputNumber
